@@ -43,6 +43,7 @@ const requestHandlerChallenge = (req, res) => {
   const url = req.url;
   const method = req.method;
   if (url === '/') {
+    res.setHeader('Content-Type', 'text/html');
     res.write('<html>');
     res.write('<head><title>Enter User</title><head>');
     res.write(
@@ -53,6 +54,7 @@ const requestHandlerChallenge = (req, res) => {
   }
 
   if (url === '/users') {
+    res.setHeader('Content-Type', 'text/html');
     res.write('<html>');
     res.write('<head><title>List of Users</title><head>');
     res.write('<body><h1>Users</h1></body>');
@@ -68,20 +70,21 @@ const requestHandlerChallenge = (req, res) => {
       body.push(chunk);
     });
 
-    return req.on('end', () => {
+    req.on('end', () => {
       const parsedBody = Buffer.concat(body).toString();
       const username = parsedBody.split('=')[1];
       console.log(username);
-      res.statusCode = 302;
-      res.setHeader('Location', '/users');
-      return res.end();
     });
+
+    res.statusCode = 302;
+    res.setHeader('Location', '/users');
+    return res.end();
   }
 
   res.setHeader('Content-Type', 'text/html');
   res.write('<html>');
-  res.write('<head><title>My First Page</title><head>');
-  res.write('<body><h1>Hello from my Node.js Server!</h1></body>');
+  res.write('<head><title>Not found</title><head>');
+  res.write('<body><h1>404! Page not found.</h1></body>');
   res.write('</html>');
   res.end();
 };
